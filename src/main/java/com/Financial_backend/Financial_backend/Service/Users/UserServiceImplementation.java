@@ -30,6 +30,7 @@ public class UserServiceImplementation implements UsersServiceInterface {
 
         UsersEntity usersEntity = new UsersEntity();
 
+        //copy data from request dto->entity
         usersEntity.setEmail(userRegisterRequestDto.getEmail());
         usersEntity.setPassword_hash(passwordEncoder.encode(userRegisterRequestDto.getPassword()));
         usersEntity.setFirstName(userRegisterRequestDto.getFirstName());
