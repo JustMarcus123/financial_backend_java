@@ -36,6 +36,14 @@ public class SecurityConfig {
                         // Public endpoints
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/users/register").permitAll()
+                        .requestMatchers("/api/planType/create").permitAll()
+                        .requestMatchers("/api/planType/get").permitAll()
+                        .requestMatchers("/api/sponsor/create").permitAll()
+                        .requestMatchers("/api/sponsor/allsponsor").permitAll()
+
+
+
+
                         // Everything else requires a valid JWT
                         .anyRequest().authenticated()
                 )
