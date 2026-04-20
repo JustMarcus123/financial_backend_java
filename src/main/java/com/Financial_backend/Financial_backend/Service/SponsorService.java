@@ -6,7 +6,10 @@ import com.Financial_backend.Financial_backend.Entity.SponsorEntity;
 import com.Financial_backend.Financial_backend.Respository.SponsorRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class SponsorService {
@@ -14,14 +17,14 @@ public class SponsorService {
     private final SponsorRepository sponsorRepository;
 
 
-    public SponsorService (SponsorRepository sponsorRepository){
+    public SponsorService (SponsorRepository sponsorRepository ){
         this.sponsorRepository = sponsorRepository;
     }
 
 
     // create new sponsor
 
-    //1. create method declaration
+                    //1.  method declaration
     public SponsorResponseDto createSponsor(SponsorRequestDto sponsorRequestDto){
 
 
@@ -43,6 +46,15 @@ public class SponsorService {
       sponsorEntity.setVesting_schedule(sponsorRequestDto.getVesting_schedule());
       sponsorEntity.setSafe_harbour_plan(sponsorRequestDto.getSafe_harbour_plan());
       sponsorEntity.setPlan_start_date(sponsorRequestDto.getPlan_start_date());
+
+      String enrollCode = sponsorRequestDto.getCompany_name()
+              .replaceAll("","")
+              .toUpperCase()
+              .substring(0, Math.min(10, sponsorRequestDto.getCompany_name().length()))
+              +"_" + LocalDateTime.now().getYear()
+              +"_" + UUID.randomUUID().toString().substring(0,6).toUpperCase();
+
+      sponsorEntity .setEnrollmentCode(enrollCode);
 
       SponsorEntity saved = sponsorRepository.save(sponsorEntity);
 
@@ -90,7 +102,7 @@ public class SponsorService {
   private SponsorResponseDto convertToResponseDto(SponsorEntity sponsorEntity){
       SponsorResponseDto sponsorResponseDto = new SponsorResponseDto();
 
-      sponsorResponseDto.setCompany_name(sponsorEntity.getCompany_name());
+      sponsorResponseDto.setId(sponsorEntity.getId());
       sponsorResponseDto.setCompany_name(sponsorEntity.getCompany_name());
       sponsorResponseDto.setEin(sponsorEntity.getEin());
       sponsorResponseDto.setPrimaryContactName(sponsorEntity.getPrimaryContactName());
@@ -107,9 +119,82 @@ public class SponsorService {
       sponsorResponseDto.setVesting_schedule(sponsorEntity.getVesting_schedule());
       sponsorResponseDto.setSafe_harbour_plan(sponsorEntity.getSafe_harbour_plan());
       sponsorResponseDto.setPlan_start_date(sponsorEntity.getPlan_start_date());
+      sponsorResponseDto.setSponsorStatus(String.valueOf(sponsorEntity.getSponsorStatus())); //in case if the data is not type(string,numbers, int) then we use 'valueof'
 
       return sponsorResponseDto;
   }
+
+
+
+  // updating the sponsor
+
+    public SponsorResponseDto updateSponsor(Long id,   SponsorRequestDto sponsorRequestDto){
+
+       // find this particular requested sponsor through the id
+     SponsorEntity existingSponsor = sponsorRepository.findById(id)
+             .orElseThrow(()->new RuntimeException("Sponsor not found with if"+ id));
+
+
+     //update only the field that are provided, we update the data only if it's not null
+
+     if(sponsorRequestDto.getCompany_name() !=null)  {
+         existingSponsor.setCompany_name(sponsorRequestDto.getCompany_name());
+     }
+
+     if(sponsorRequestDto.getEin() !=null){
+         existingSponsor.setEin(sponsorRequestDto.getEin());
+     }
+
+        if(sponsorRequestDto.getPlan_type() !=null){
+            existingSponsor.setPlan_type(sponsorRequestDto.getPlan_type());
+        }
+        if(sponsorRequestDto.getMatch_formula() !=null){
+            existingSponsor.setMatch_formula(sponsorRequestDto.getMatch_formula());
+        }
+
+        if(sponsorRequestDto.getVesting_schedule() !=null){
+            existingSponsor.setVesting_schedule(sponsorRequestDto.getVesting_schedule());
+        }
+        if(sponsorRequestDto.getSafe_harbour_plan() !=null){
+            existingSponsor.setSafe_harbour_plan(sponsorRequestDto.getSafe_harbour_plan());
+        }
+        if(sponsorRequestDto.getPlan_start_date() !=null){
+            existingSponsor.setPlan_start_date(sponsorRequestDto.getPlan_start_date());
+        }
+        if(sponsorRequestDto.getPrimaryContactName() !=null){
+            existingSponsor.setPrimaryContactName(sponsorRequestDto.getPrimaryContactName());
+        }
+        if(sponsorRequestDto.getPrimaryContactEmail() !=null){
+            existingSponsor.setPrimaryContactEmail(sponsorRequestDto.getPrimaryContactEmail());
+        }
+        if(sponsorRequestDto.getPrimary_contact_phone() !=null){
+            existingSponsor.setPrimary_contact_phone(sponsorRequestDto.getPrimary_contact_phone());
+        }
+        if(sponsorRequestDto.getAddressLine1() !=null){
+            existingSponsor.setAddressLine1(sponsorRequestDto.getAddressLine1());
+        }
+        if(sponsorRequestDto.getCity() !=null){
+            existingSponsor.setCity(sponsorRequestDto.getCity());
+        }
+        if(sponsorRequestDto.getState() !=null){
+            existingSponsor.setState(sponsorRequestDto.getState());
+        }
+        if(sponsorRequestDto.getZipcode() !=null){
+            existingSponsor.setZipcode(sponsorRequestDto.getZipcode());
+        }
+
+        if(sponsorRequestDto.getCountry() !=null){
+            existingSponsor.setCountry(sponsorRequestDto.getCountry());
+        }
+
+      SponsorEntity sponsorEntity = sponsorRepository.save(existingSponsor);
+
+         //convert entity to response dto manually
+
+        return convertToResponseDto(sponsorEntity);
+
+    }
+
 
 
 

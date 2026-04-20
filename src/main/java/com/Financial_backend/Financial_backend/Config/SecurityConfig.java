@@ -40,6 +40,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/planType/get").permitAll()
                         .requestMatchers("/api/sponsor/create").permitAll()
                         .requestMatchers("/api/sponsor/allsponsor").permitAll()
+                        .requestMatchers("/api/sponsor/update_sponsor/**").permitAll()
+                        .requestMatchers("/api/sponsor/**").permitAll()
+
+
 
 
 

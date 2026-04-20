@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public class SponsorResponseDto {
 
     private Long id;
+
     private String company_name;
 
     private String ein;
@@ -20,6 +21,8 @@ public class SponsorResponseDto {
     private String vesting_schedule;
 
     private String safe_harbour_plan;
+
+    private String sponsorStatus;
 
     private String plan_start_date;
 

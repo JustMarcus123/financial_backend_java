@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,6 +24,13 @@ public class SponsorEntity {
 
     @Column(unique = true, nullable = false, length = 225)
     private String company_name;
+
+    @Column(unique = true, length = 50)
+    private String enrollmentCode; // this will be a code foe employee self enrollment which will be created when creating the sponsor
+
+    @Builder.Default
+    @OneToMany(mappedBy ="sponsor",fetch = FetchType.LAZY)
+    private List<UsersEntity>  users = new ArrayList<>();
 
     @Column(nullable = false)
     private String plan_type;
