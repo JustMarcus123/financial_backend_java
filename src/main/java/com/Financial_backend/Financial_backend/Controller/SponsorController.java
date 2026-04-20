@@ -40,4 +40,18 @@ public class SponsorController {
     }
 
 
+    //updating the sponsor
+    @PutMapping("/update_sponsor/{id}")
+
+    public ResponseEntity<SponsorResponseDto> updateSponsor(
+            @PathVariable Long id,
+            @RequestBody SponsorRequestDto sponsorRequestDto
+    ){
+        SponsorResponseDto sponsorResponseDto = sponsorService.updateSponsor(id, sponsorRequestDto);
+
+        return ResponseEntity.ok(sponsorResponseDto);
+
+    }
+
+
 }

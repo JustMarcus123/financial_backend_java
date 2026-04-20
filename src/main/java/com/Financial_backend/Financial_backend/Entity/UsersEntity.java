@@ -21,6 +21,8 @@ public class UsersEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+
     @Column(nullable = false ,unique = true)
     private String email;
 
@@ -38,6 +40,10 @@ public class UsersEntity {
 
     @Column(nullable = false)
     private Boolean role = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sponsor_id")
+    private SponsorEntity sponsor;
 
     @Column(nullable = false)
     private Boolean mfa_enable = false;
