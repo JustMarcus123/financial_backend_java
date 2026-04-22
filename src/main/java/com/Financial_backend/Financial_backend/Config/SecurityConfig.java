@@ -57,11 +57,14 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // ✅ Allow requests from your React frontend
+    // Allow requests from your React frontend
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173","https://financialrecord.vercel.app")); // your Vite dev port
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "https://financialrecord.vercel.app"
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
