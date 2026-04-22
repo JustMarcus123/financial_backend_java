@@ -53,5 +53,10 @@ public class SponsorController {
 
     }
 
+    @PutMapping("/activate/{id}")
+    public ResponseEntity<String> activateSponsor(@PathVariable Long id) {
+        sponsorService.activateSponsor(id);
+        return ResponseEntity.ok("Sponsor activated successfully");
+    }
 
 }

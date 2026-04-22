@@ -31,31 +31,23 @@ public class JwtService {
      return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
  }
 
- public String generateAccessToken(UsersEntity usersEntity){
+    public String generateAccessToken(UsersEntity usersEntity) {
 
-     System.out.println("JWT: Generating token for..."+ usersEntity.getEmail());
+        Map<String, Object> claims = new HashMap<>();
 
-     Map<String, Object> claims = new HashMap<>();
+        claims.put("name", usersEntity.getFirstName() + " " + usersEntity.getLastName());
+        claims.put("role", usersEntity.getRole().name());   // ← SUPER_ADMIN, EMPLOYER_ADMIN etc.
+        claims.put("firstName", usersEntity.getFirstName());
+        claims.put("type", "access");
 
-     //these fields are decoded by authContext on the frontend
-     claims.put("name",usersEntity.getFirstName()+ " "+ usersEntity.getLastName());
-     claims.put("role",Boolean.TRUE.equals(usersEntity.getRole())? "ADMIN":"USER");
-     claims.put("firstName", usersEntity.getFirstName());
-     claims.put("type","access");
-
-     System.out.println("JWT: token generated successfully");
-
-     String token =Jwts.builder()
-             .setClaims(claims)
-             .setSubject(usersEntity.getEmail())
-             .setIssuedAt(new Date())
-             .setExpiration(new Date(System.currentTimeMillis()+ accessTokenExpiration))
-             .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-             .compact();
-
-     log.info("jwt access token generated for:{} ",usersEntity.getEmail());
-     return token;
- }
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(usersEntity.getEmail())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
 
  public  String extractEmail(String token){
     return extractAllClaims(token).getSubject();
