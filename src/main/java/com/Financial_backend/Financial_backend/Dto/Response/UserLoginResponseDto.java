@@ -9,5 +9,7 @@ public class UserLoginResponseDto {
     private String refreshToken;
     private String email;
     private String message;
+    private String role;
+    private String firstName;
 
 }

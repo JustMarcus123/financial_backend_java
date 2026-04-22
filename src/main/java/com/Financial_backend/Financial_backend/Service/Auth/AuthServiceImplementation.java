@@ -75,6 +75,7 @@ public class AuthServiceImplementation {
        response.setAccessToken(accessToken);
        response.setRefreshToken(refreshTokenEntity.getToken());
        response.setEmail(users.getEmail());
+       response.setRole(users.getRole().name());
        response.setMessage("Login successful");
 
        return response;
@@ -103,6 +104,10 @@ public class AuthServiceImplementation {
 
         return response;
     }
+
+
+
+
 
     //logout
 

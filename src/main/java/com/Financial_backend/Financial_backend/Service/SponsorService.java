@@ -3,8 +3,14 @@ package com.Financial_backend.Financial_backend.Service;
 import com.Financial_backend.Financial_backend.Dto.Request.SponsorRequestDto;
 import com.Financial_backend.Financial_backend.Dto.Response.SponsorResponseDto;
 import com.Financial_backend.Financial_backend.Entity.SponsorEntity;
+import com.Financial_backend.Financial_backend.Entity.UsersEntity;
+import com.Financial_backend.Financial_backend.Enum.Role;
+import com.Financial_backend.Financial_backend.Enum.SponsorStatus;
 import com.Financial_backend.Financial_backend.Respository.SponsorRepository;
+import com.Financial_backend.Financial_backend.Respository.UsersRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,10 +21,15 @@ import java.util.UUID;
 public class SponsorService {
 
     private final SponsorRepository sponsorRepository;
+    private final UsersRepository usersRepository;
+    private final PasswordEncoder passwordEncoder;
+    private  EmailService emailService;
 
-
-    public SponsorService (SponsorRepository sponsorRepository ){
+    public SponsorService (SponsorRepository sponsorRepository, UsersRepository usersRepository , PasswordEncoder passwordEncoder, EmailService emailService){
         this.sponsorRepository = sponsorRepository;
+        this.usersRepository= usersRepository;
+        this.passwordEncoder= passwordEncoder;
+        this.emailService= emailService;
     }
 
 
@@ -193,6 +204,100 @@ public class SponsorService {
 
         return convertToResponseDto(sponsorEntity);
 
+    }
+
+    @Transactional
+    public void activateSponsor(Long sponsorId) {
+
+        // 1. Find the sponsor
+        SponsorEntity sponsor = sponsorRepository.findById(sponsorId)
+                .orElseThrow(() -> new RuntimeException(
+                        "Sponsor not found with id: " + sponsorId));
+
+        // 2. Check it is currently DRAFT
+        if (sponsor.getSponsorStatus() != SponsorStatus.DRAFT) {
+            throw new RuntimeException(
+                    "Sponsor is already " + sponsor.getSponsorStatus() +
+                            " — can only activate DRAFT sponsors");
+        }
+
+        // 3. Check if employer user already exists for this email
+        if (usersRepository.existsByEmail(sponsor.getPrimaryContactEmail())) {
+            throw new RuntimeException(
+                    "A user already exists with email: " +
+                            sponsor.getPrimaryContactEmail());
+        }
+
+        // 4. Generate temporary password
+        String tempPassword = generateTempPassword();
+
+        // 5. Create the EMPLOYER_ADMIN user
+        UsersEntity employerUser = UsersEntity.builder()
+                .email(sponsor.getPrimaryContactEmail())
+                .password_hash(passwordEncoder.encode(tempPassword))
+                .firstName(getFirstName(sponsor.getPrimaryContactName()))
+                .lastName(getLastName(sponsor.getPrimaryContactName()))
+                .phone(sponsor.getPrimary_contact_phone())
+                .role(Role.EMPLOYER_ADMIN)
+                .sponsor(sponsor)
+                .is_active(true)
+                .mfa_enable(false)
+                .email_varified(false)
+                .build();
+        usersRepository.save(employerUser);
+
+        // 6. Update sponsor status to ACTIVE
+        sponsor.setSponsorStatus(SponsorStatus.ACTIVE);
+        sponsor.setOnboarded_date(LocalDateTime.now());
+        sponsor.setUpdatedAt(LocalDateTime.now());
+        sponsorRepository.save(sponsor);
+
+        // 7. Send welcome email with temp password
+        // NOTE: plain tempPassword sent in email — NOT the hash
+        emailService.sendEmployerWelcomeEmail(
+                sponsor.getPrimaryContactEmail(),
+                sponsor.getPrimaryContactName(),
+                sponsor.getCompany_name(),
+                tempPassword
+        );
+    }
+
+    // ── HELPERS ──────────────────────────────────────────────
+
+    private String generateTempPassword() {
+        // Generates something like "Temp@A3kP"
+        String upper   = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+        String lower   = "abcdefghjkmnpqrstuvwxyz";
+        String digits  = "23456789";
+
+        return "Temp@"
+                + upper.charAt((int)(Math.random() * upper.length()))
+                + digits.charAt((int)(Math.random() * digits.length()))
+                + lower.charAt((int)(Math.random() * lower.length()))
+                + upper.charAt((int)(Math.random() * upper.length()));
+    }
+
+    private String generateEnrollmentCode(String companyName) {
+        String cleaned = companyName
+                .replaceAll("[^a-zA-Z0-9]", "")
+                .toUpperCase()
+                .substring(0, Math.min(8, companyName.length()));
+        String random = UUID.randomUUID()
+                .toString()
+                .substring(0, 6)
+                .toUpperCase();
+        return cleaned + "-" + random;
+        // e.g. "ACMECORP-A3F2B1"
+    }
+
+    private String getFirstName(String fullName) {
+        if (fullName == null || !fullName.contains(" ")) return fullName;
+        return fullName.substring(0, fullName.indexOf(" "));
+    }
+
+    private String getLastName(String fullName) {
+        if (fullName == null || !fullName.contains(" ")) return "";
+        return fullName.substring(fullName.indexOf(" ") + 1);
     }
 
 

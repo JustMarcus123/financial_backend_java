@@ -41,7 +41,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/sponsor/create").permitAll()
                         .requestMatchers("/api/sponsor/allsponsor").permitAll()
                         .requestMatchers("/api/sponsor/update_sponsor/**").permitAll()
-                        .requestMatchers("/api/sponsor/**").permitAll()
+                                .requestMatchers("/api/sponsor/activate/**").permitAll()
+//                        .requestMatchers("/api/sponsor/**").permitAll()
 
 
 

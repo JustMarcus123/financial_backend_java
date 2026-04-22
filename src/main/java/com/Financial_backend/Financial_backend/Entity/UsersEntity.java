@@ -1,5 +1,6 @@
 package com.Financial_backend.Financial_backend.Entity;
 
+import com.Financial_backend.Financial_backend.Enum.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -21,9 +22,7 @@ public class UsersEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-
-    @Column(nullable = false ,unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -35,11 +34,13 @@ public class UsersEntity {
     @Column(nullable = false)
     private String lastName;
 
-    @Column(unique = true )
+    @Column(unique = true)
     private String phone;
 
+    // ── CORRECT ROLE FIELD ──
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Boolean role = false;
+    private Role role;          // Role is your enum
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sponsor_id")
@@ -51,10 +52,10 @@ public class UsersEntity {
     private String mfa_secret;
 
     @Column(nullable = false)
-    private Boolean is_active = true;
+    private Boolean is_active = false;     // Better naming: isActive
 
     @Column(nullable = false)
-    private Boolean email_varified = false;
+    private Boolean email_varified = false; // Typo: should be email_verified
 
     @CreationTimestamp
     @Column(updatable = false)
