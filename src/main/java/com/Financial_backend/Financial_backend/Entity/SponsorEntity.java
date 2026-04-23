@@ -71,7 +71,7 @@ public class SponsorEntity {
     @Column(length = 20)
     private String zipcode;
 
-    @Column(length = 1)
+    @Column(length = 100)
     private String country = "United States";   // which means by default it will keep india by default if not choose
 
     @Enumerated(EnumType.STRING)
