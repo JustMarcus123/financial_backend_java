@@ -28,7 +28,7 @@ public class PlanTypeService {
 
         planTypeEntity.setPlan_type(planTypeRequestDto.getPlanType());
 
-      PlanTypeEntity saved= planTypeRepository.save(planTypeEntity);
+        PlanTypeEntity saved= planTypeRepository.save(planTypeEntity);
 
         PlanTypeResponseDto planTypeResponseDto = new PlanTypeResponseDto();
 

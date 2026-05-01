@@ -48,7 +48,7 @@ public class AuthServiceImplementation {
 
            //check if it's active
        if(Boolean.FALSE.equals(users.getIs_active())){
-           throw new RuntimeException("Account is deactivated:");
+           throw new RuntimeException("Account is not activated:");
        }
 
        //varify password
