@@ -34,7 +34,6 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
-                                .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/users/register").permitAll()
                         .requestMatchers("/api/planType/create").permitAll()
@@ -42,11 +41,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/sponsor/create").permitAll()
                         .requestMatchers("/api/sponsor/allsponsor").permitAll()
                         .requestMatchers("/api/sponsor/update_sponsor/**").permitAll()
-                                .requestMatchers("/api/sponsor/activate/**").permitAll()
-//                        .requestMatchers("/api/sponsor/**").permitAll()
-
-
-
+                        .requestMatchers("/api/sponsor/**").permitAll()
+                        .requestMatchers("/api/employee/add").permitAll()
+                        .requestMatchers("/api/employee/**").hasRole("EMPLOYER_ADMIN")
 
 
 

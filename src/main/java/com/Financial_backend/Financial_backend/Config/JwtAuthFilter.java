@@ -45,12 +45,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (jwtService.isTokenValid(token)) {
             String email = jwtService.extractEmail(token);
 
-            usersRepository.findByEmail(email).ifPresent(user -> {
-                String role = Boolean.TRUE.equals(user.getRole()) ? "ROLE_ADMIN" : "ROLE_USER";
+            usersRepository.findByEmailWithSponsor(email).ifPresent(user -> {
+                String role = user.getRole().name();
 
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
-                                email,
+                                user,
                                 null,
                                 List.of(new SimpleGrantedAuthority(role))
                         );
