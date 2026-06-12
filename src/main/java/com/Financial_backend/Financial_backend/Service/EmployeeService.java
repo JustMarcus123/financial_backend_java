@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
@@ -69,7 +70,7 @@ public class EmployeeService {
         usersEntity.setRole(Role.EMPLOYEE);
         usersEntity.setSponsor(sponsorEntity);
 //        usersEntity.setEmployeeId(employeeId);  //EMP-00182
-        usersEntity.setStatus(EmployeeStatus.PENDING);
+        usersEntity.setStatus(EmployeeStatus.ACTIVE);
         usersEntity.setCreated_at(LocalDateTime.now());
         usersEntity.setUpdated_at(LocalDateTime.now());
         usersEntity.setIs_active(true);
@@ -103,6 +104,7 @@ public class EmployeeService {
       response.setEmployeeId(saved.getEmployeeId());
       response.setStatus(saved.getStatus());
       response.setStartDate(saved.getStartDate());
+
       response.setDeferralRate(Double.valueOf(String.valueOf(saved.getDeferralRate())));
 
       return response;
@@ -113,11 +115,32 @@ public class EmployeeService {
     //Get all employees for this sponsor
     //-------------------------------------
 
-    public List <UsersEntity> getEmployee(SponsorEntity sponsor){
+    public List <EmployeeResponseDto> getEmployee(SponsorEntity sponsor){
 
         return usersRepository.findEmployeeBySponsor(
                 sponsor,Role.EMPLOYEE
-        );
+        )
+                .stream()
+                .map(usersEntity ->{
+
+                    EmployeeResponseDto employeeResponseDto = new EmployeeResponseDto();
+                    employeeResponseDto.setFirstName(usersEntity.getFirstName());
+                    employeeResponseDto.setLastName(usersEntity.getLastName());
+                    employeeResponseDto.setPhone(usersEntity.getPhone());
+                    employeeResponseDto.setEmail(usersEntity.getEmail());
+                    employeeResponseDto.setDepartment(usersEntity.getDepartment());
+                    employeeResponseDto.setJobTitle(usersEntity.getJobTitle());
+                    employeeResponseDto.setAnnualSalary(usersEntity.getAnnualSalary());
+                    employeeResponseDto.setEmployeeId(usersEntity.getEmployeeId());
+                    employeeResponseDto.setStatus(usersEntity.getStatus());
+                    employeeResponseDto.setStartDate(usersEntity.getStartDate());
+                    employeeResponseDto.setDeferralRate(Double.valueOf(usersEntity.getDeferralRate()));
+
+                    return employeeResponseDto;
+
+                } )
+
+        .collect(Collectors.toList());
     }
 
     //-------------------------------------
