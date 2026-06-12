@@ -36,7 +36,31 @@ public class SponsorEntity {
     private String plan_type;
 
     @Column(nullable = false)
-    private String match_formula;
+    private String match_formula;  //eg: 50% up to 8%
+
+    //now since the match formula are in string formate we have to parse it
+
+    public  double getMatchPercentage(){
+        // "50% up to 8%" → split by space → ["50%", "up", "to", "8%"]
+        String[] parts = match_formula.split(" ");
+        String pct = parts[0].replace("%", "");
+        //convert it into decimal
+
+        return Double.parseDouble(pct)/100;
+    }
+
+    // the max amount the employer can match from the employee match --matchCap
+    public double getMatchCap(){
+        // "50% up to 8%" → split by space → ["50%", "up", "to", "8%"]
+
+        String[] parts = match_formula.split(" ");
+        String cap = parts[3].replace("%", "");
+        //turn it into decimal points
+
+        return Double.parseDouble(cap)/100;
+    }
+
+
 
     @Column(nullable = false)
     private String vesting_schedule;

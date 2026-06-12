@@ -7,6 +7,7 @@ import com.Financial_backend.Financial_backend.Enum.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,15 @@ public interface UsersRepository extends JpaRepository<UsersEntity, Long> {
 
     @Query("SELECT u FROM UsersEntity u LEFT JOIN FETCH u.sponsor WHERE u.email = :email")
     Optional<UsersEntity> findByEmailWithSponsor(@Param("email") String email);
+
+    //to find employees by their code and sponsor
+    @Query("SELECT u FROM UsersEntity u " +
+            "WHERE u.employeeId =:employeeId AND u.sponsor =:sponsor")
+    Optional<UsersEntity> findByEmpCodeAndSponsor(@Param("employeeId") String employeeId,
+                                                  @Param("sponsor")SponsorEntity sponsor
+                                                  );
+
+
 
 
 }

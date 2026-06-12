@@ -43,8 +43,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/sponsor/update_sponsor/**").permitAll()
                         .requestMatchers("/api/sponsor/**").permitAll()
                         .requestMatchers("/api/employee/add").permitAll()
+                        .requestMatchers("/api/employee/fetch").permitAll()
                         .requestMatchers("/api/employee/**").hasRole("EMPLOYER_ADMIN")
-
+                        .requestMatchers("/api/payroll/upload").permitAll()
+                        .requestMatchers("/api/payroll/fetchBalance").permitAll()
 
 
                         // Everything else requires a valid JWT

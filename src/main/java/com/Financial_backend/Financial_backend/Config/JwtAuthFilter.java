@@ -45,6 +45,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (jwtService.isTokenValid(token)) {
             String email = jwtService.extractEmail(token);
 
+            System.out.println("TOKEN EMAIL" + email);
+
             usersRepository.findByEmailWithSponsor(email).ifPresent(user -> {
                 String role = user.getRole().name();
 

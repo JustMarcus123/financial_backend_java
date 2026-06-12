@@ -51,6 +51,7 @@ public class UsersEntity {
     private String annualSalary;  //
     private String deferralRate;  // 0.8 = 8%
     private String startDate;
+    private Double balance = 0.00;
 
     private EmployeeStatus status;   //ACTIVE, NOT_ENROLLED, PENDING, TERMINATED
 
