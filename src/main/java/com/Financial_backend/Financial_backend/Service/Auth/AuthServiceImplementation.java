@@ -71,8 +71,9 @@ public class AuthServiceImplementation {
 
        System.out.println("Refresh token saved to db for 7 days --- stateful");
 
-       UserLoginResponseDto response = new UserLoginResponseDto();
+       UserLoginResponseDto response = new UserLoginResponseDto();   //to refractor this later
        response.setAccessToken(accessToken);
+       response.setFirstName(users.getFirstName());
        response.setRefreshToken(refreshTokenEntity.getToken());
        response.setEmail(users.getEmail());
        response.setRole(users.getRole().name());

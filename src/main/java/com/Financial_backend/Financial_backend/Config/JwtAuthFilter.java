@@ -4,6 +4,7 @@ import com.Financial_backend.Financial_backend.Respository.UsersRepository;
 import com.Financial_backend.Financial_backend.Service.Users.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,8 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
-
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
@@ -32,20 +33,27 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        final String authHeader = request.getHeader("Authorization");
+        String token = null;
+
+        // ✅ read token from cookie instead of Authorization header
+        if (request.getCookies() != null) {
+            token  = Arrays.stream(request.getCookies())
+                    .filter(c -> c.getName().equals("accessToken"))
+                    .findFirst()
+                    .map(Cookie::getValue)
+                    .orElse(null);
+        }
 
         // No token — skip filter, let SecurityConfig decide
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (token == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = authHeader.substring(7); // strip "Bearer "
-
         if (jwtService.isTokenValid(token)) {
             String email = jwtService.extractEmail(token);
 
-            System.out.println("TOKEN EMAIL" + email);
+            System.out.println("TOKEN EMAIL: " + email);
 
             usersRepository.findByEmailWithSponsor(email).ifPresent(user -> {
                 String role = user.getRole().name();
