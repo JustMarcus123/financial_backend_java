@@ -48,6 +48,15 @@ public class SecurityConfig {
                         .requestMatchers("/api/employee/**").hasRole("EMPLOYER_ADMIN")
                         .requestMatchers("/api/payroll/upload").permitAll()
                         .requestMatchers("/api/payroll/fetchBalance").permitAll()
+                        .requestMatchers("/api/loanrequest/newRequest").permitAll()
+
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/swagger-ui.html").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/v3/api-docs").permitAll()
+
+                        .requestMatchers("/api/auth/**").permitAll()
 
 
                         // Everything else requires a valid JWT

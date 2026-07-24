@@ -42,7 +42,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     .findFirst()
                     .map(Cookie::getValue)
                     .orElse(null);
+        }else {
+            System.out.println("No Cookie Found");  //
         }
+
+        System.out.println("TOKEN:" + token);
 
         // No token — skip filter, let SecurityConfig decide
         if (token == null) {
@@ -50,13 +54,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
+        new SimpleGrantedAuthority("ROLE_EMPLOYER_ADMIN");
+
         if (jwtService.isTokenValid(token)) {
             String email = jwtService.extractEmail(token);
 
             System.out.println("TOKEN EMAIL: " + email);
 
             usersRepository.findByEmailWithSponsor(email).ifPresent(user -> {
-                String role = user.getRole().name();
+                String role ="ROLE_"+  user.getRole().name();
 
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(

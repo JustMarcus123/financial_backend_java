@@ -3,14 +3,12 @@ package com.Financial_backend.Financial_backend.Service;
 import com.Financial_backend.Financial_backend.Dto.Request.PayrollUploadRequestDto;
 import com.Financial_backend.Financial_backend.Dto.Response.EmployeeResponseDto;
 import com.Financial_backend.Financial_backend.Dto.Response.PayrollResponseDto;
-import com.Financial_backend.Financial_backend.Entity.ContributionBatchEntity;
-import com.Financial_backend.Financial_backend.Entity.ContributionLineItemEntity;
-import com.Financial_backend.Financial_backend.Entity.SponsorEntity;
-import com.Financial_backend.Financial_backend.Entity.UsersEntity;
+import com.Financial_backend.Financial_backend.Entity.*;
 import com.Financial_backend.Financial_backend.Enum.BatchStatus;
 import com.Financial_backend.Financial_backend.Enum.PayrollType;
 import com.Financial_backend.Financial_backend.Respository.ContributionBatchRepository;
 import com.Financial_backend.Financial_backend.Respository.ContributionLineItemRepository;
+import com.Financial_backend.Financial_backend.Respository.NetworthRepository;
 import com.Financial_backend.Financial_backend.Respository.UsersRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,8 +17,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,7 @@ public class PayrollService {
     private final ContributionBatchRepository contributionBatchRepository;
     private final UsersRepository usersRepository;
     private final ContributionLineItemRepository contributionLineItemRepository;
+    private final NetworthRepository networthRepository;
 
 
     //IRS LIMIT 2026
@@ -70,9 +72,14 @@ public class PayrollService {
 
         contributionBatchRepository.save(batch);
 
+
+
+
         // parse CSV and Create line items
        List<ContributionLineItemEntity> lineItems = parseCSV(
                file,batch,sponsor);
+
+
 
        //calculate totals
         double totalEmployee = lineItems.stream()
@@ -93,8 +100,14 @@ public class PayrollService {
         batch.setUpdatedAt(LocalDateTime.now());
         contributionBatchRepository.save(batch);
 
+
+
         //process each line and update the balance
         processLineItems(lineItems, batch, sponsor);
+
+
+
+        processNetWorth(lineItems);
 
         return mapToResponse(batch);
 
@@ -166,6 +179,9 @@ public class PayrollService {
                         grossSalary, employeeAmount, sponsor
                 );
 
+
+
+
                 //check IRS limit
                 double ytdDeferred = getYTDDeferred(employee); //we send the employee as object for checking the IRS limit
                 boolean irsLimitReached = false;
@@ -176,6 +192,9 @@ public class PayrollService {
                     employeeAmount = Math.max(0, IRS_LIMIT_2026 - ytdDeferred );
                     irsLimitReached = true;
                 }
+
+                //
+
                 ContributionLineItemEntity lineItem = ContributionLineItemEntity.builder()
                         .batch(batch)
                         .employee(employee)
@@ -191,8 +210,14 @@ public class PayrollService {
                         .build();
 
                 contributionLineItemRepository.save(lineItem);  // ✅ save to DB
+
+
+
                 lineItems.add(lineItem);                         // ✅ add to list
             }
+
+
+
         } catch (Exception e){
             throw new RuntimeException(
                     "Failed to parse CSV:" + e.getMessage()
@@ -200,6 +225,9 @@ public class PayrollService {
         }
         return lineItems;
     }
+
+
+
 
     //--------------------------------------
     //PROCESS LINE ITEMS - update account balance
@@ -209,7 +237,7 @@ public class PayrollService {
     private void processLineItems(
 
             List <ContributionLineItemEntity> lineItemEntities,
-            ContributionBatchEntity contributionBatchEntity,
+            ContributionBatchEntity currentBatch,
             SponsorEntity sponsor
     ){
         int successCount = 0;
@@ -225,18 +253,30 @@ public class PayrollService {
                     continue;
                 }
 
+
+                //we will dynamically assign the startDate and endDate
+                LocalDate now = LocalDate.now();
+                String startDate = now.with(TemporalAdjusters.firstDayOfYear()).toString();
+                String endDate = now.with(TemporalAdjusters.lastDayOfYear()).toString();
+
+
+
+                Double ytdContribution = contributionLineItemRepository.findByDate(employee.getId(),startDate, endDate);
+
+
+
                 //Update employee 401k balance
                 double currentBalance = employee.getBalance() !=null ? employee.getBalance() : 0.00;
 
-                employee.setBalance(
-                        currentBalance + lineItem.getTotalAmount()
-                );
-
+                employee.setBalance(currentBalance + lineItem.getTotalAmount());
                 employee.setUpdated_at(LocalDateTime.now());
+                employee.setYTDContribution(ytdContribution);
+
 
                 usersRepository.save(employee);
 
-                //Mark line as spotted
+
+                //Mark line as posted
                 lineItem.setPosted(true);
                 contributionLineItemRepository.save(lineItem);
 
@@ -246,6 +286,50 @@ public class PayrollService {
                 throw new RuntimeException(e);
             }
 
+        }
+
+        //this part is for updating whether the batch is success or not
+        currentBatch.setBatchStatus(BatchStatus.POSTED);
+        contributionBatchRepository.save(currentBatch);
+
+
+
+
+
+    }
+
+
+    // another triggering for networth
+    private void processNetWorth(
+          List  <ContributionLineItemEntity> lineItemNetWorth
+    ){
+        for(ContributionLineItemEntity lineItemBalance : lineItemNetWorth){
+
+            UsersEntity employee = lineItemBalance.getEmployee();  // using usersEntity since the "employee" is usersEntity type object still
+
+
+            if(employee == null){
+                throw new RuntimeException("Employee does not exist");
+            }
+
+            //now we are going to find the net worth of a particular employee, and if it does not exist then we will create a new one using build feature..... which will be of NetworthEntity type object
+            NetworthEntity networth = networthRepository.findByEmployee(employee)
+                    .orElseGet(()-> NetworthEntity.builder()
+                            .employee(employee)
+                            .TotalAssets(0.0)
+                            .TotalLiabilities(0.0)
+                            .NetWorth(0.0)
+                            .build());
+
+
+
+            double CurrentAsset = networth.getTotalAssets() !=null ? networth.getNetWorth(): 0.00;
+
+            //now update the total assets
+            networth.setTotalAssets(CurrentAsset + lineItemBalance.getTotalAmount());
+            networth.setUpdatedTime(LocalDateTime.now());
+
+            networthRepository.save(networth);
         }
     }
 
@@ -287,7 +371,6 @@ public class PayrollService {
     private double getYTDDeferred(UsersEntity employee){
 
         //let's sum all the post item amount for this employee this
-
         return contributionLineItemRepository.findByEmployee(employee).stream()
                 .filter(lineItem -> Boolean.TRUE.equals(lineItem.getPosted()))
                 .mapToDouble(lineItem->lineItem.getEmployeeAmount() != null ?
@@ -329,15 +412,24 @@ public class PayrollService {
         UsersEntity user = usersRepository.findByEmail(loggedInUser.getEmail())
                 .orElseThrow(()-> new RuntimeException("user not found"));
 
+
+
+
         return EmployeeResponseDto.builder()
                 .employeeId(user.getEmployeeId())
                 .firstName(user.getFirstName())
                 .email(user.getEmail())
                 .balance(user.getBalance() !=null ? user.getBalance() : 0.00)
+                .YTDContribution(user.getYTDContribution())
                 .build();  // Only when .build() is called does it take all those stored values and construct
 
 
     }
+
+
+
+
+
 
 
 

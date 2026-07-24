@@ -23,7 +23,9 @@ public class EmployeeResponseDto {
     private String employeeId;   //EMP-00182
     private EmployeeStatus status;   //ACTIVE, NOT_ENROLLED, PENDING, TERMINATED
 
+
     private Double balance= 0.00;
+    private  Double YTDContribution;
 
     private String startDate;
     private Double deferralRate;

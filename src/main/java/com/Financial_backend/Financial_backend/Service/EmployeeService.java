@@ -36,12 +36,20 @@ public class EmployeeService {
     //adding a single employee manually
     //----------------------------------------
     @Transactional
-    public EmployeeResponseDto addEmployee(EmployeeRequestDto employeeRequestDto, SponsorEntity sponsor){
+    public EmployeeResponseDto addEmployee(
+            EmployeeRequestDto employeeRequestDto,
+            SponsorEntity sponsor){
 
 
         //fetch the sponsor
-        SponsorEntity sponsorEntity = sponsorRepository.findById(sponsor.getId())
+        SponsorEntity loggedInSponsor = sponsorRepository.findById(sponsor.getId())
                 .orElseThrow(() -> new RuntimeException("Sponsor not found"));
+
+        //fetching information needed to stored in the users table
+        String planType = loggedInSponsor.getPlan_type();
+        String vestingSchedule = loggedInSponsor.getVesting_schedule();
+        String employerMatch = loggedInSponsor.getMatch_formula();
+
         // check of the email is already used
         if(usersRepository.existsByEmail(employeeRequestDto.getEmail())){
             throw  new RuntimeException(
@@ -49,12 +57,25 @@ public class EmployeeService {
             );
         }
 
+
         //generate temp password
         String tempPassword = generateTempPassword();
 
 
+        //----------------------------
+        // Refractor using builder
+        //----------------------------
+//
+//        UsersEntity users = UsersEntity.builder()
+//                .planType(planType)
+//                .build();
+
+
         UsersEntity usersEntity = new UsersEntity();
 
+        usersEntity.setPlanType(planType);
+        usersEntity.setVestingSchedule(vestingSchedule);
+        usersEntity.setEmployerMatch(employerMatch);
         usersEntity. setFirstName(employeeRequestDto.getFirstName());
         usersEntity.setLastName(employeeRequestDto.getLastName());
         usersEntity.setPhone(employeeRequestDto.getPhone());
@@ -68,7 +89,7 @@ public class EmployeeService {
 
         usersEntity.setPassword_hash(passwordEncoder.encode(tempPassword));
         usersEntity.setRole(Role.EMPLOYEE);
-        usersEntity.setSponsor(sponsorEntity);
+        usersEntity.setSponsor(loggedInSponsor);
 //        usersEntity.setEmployeeId(employeeId);  //EMP-00182
         usersEntity.setStatus(EmployeeStatus.ACTIVE);
         usersEntity.setCreated_at(LocalDateTime.now());
@@ -86,8 +107,8 @@ public class EmployeeService {
         emailService.sendEmployeeInviteEmail(
                 saved.getEmail(),
                 saved.getFirstName(),
-                sponsorEntity.getCompany_name(),
-                sponsorEntity.getEnrollmentCode(),
+                loggedInSponsor.getCompany_name(),
+                loggedInSponsor.getEnrollmentCode(),
                 tempPassword
         );
 
