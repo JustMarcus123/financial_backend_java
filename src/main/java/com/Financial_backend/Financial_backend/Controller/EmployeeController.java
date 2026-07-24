@@ -23,7 +23,9 @@ public class EmployeeController {
 
     //add single employee
     @PostMapping("/add")
-    public ResponseEntity<EmployeeResponseDto> addEmployee(@RequestBody EmployeeRequestDto employeeRequestDto, @AuthenticationPrincipal UsersEntity loggedInUser){
+    public ResponseEntity<EmployeeResponseDto> addEmployee(
+            @RequestBody EmployeeRequestDto employeeRequestDto,
+            @AuthenticationPrincipal UsersEntity loggedInUser){
 
         EmployeeResponseDto employeeResponseDto = employeeService.addEmployee(
                 employeeRequestDto, loggedInUser.getSponsor()
