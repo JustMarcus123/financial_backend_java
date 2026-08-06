@@ -1,7 +1,6 @@
-package com.Financial_backend.Financial_backend.Controller;
+package com.Financial_backend.Financial_backend.Auth;
 
 import com.Financial_backend.Financial_backend.Dto.Request.UserLoginRequestDto;
-import com.Financial_backend.Financial_backend.Dto.Request.UserRegisterRequestDto;
 import com.Financial_backend.Financial_backend.Dto.Response.UserLoginResponseDto;
 import com.Financial_backend.Financial_backend.Entity.UsersEntity;
 import com.Financial_backend.Financial_backend.Respository.UsersRepository;
@@ -10,13 +9,11 @@ import com.Financial_backend.Financial_backend.Service.Users.JwtService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Map;
 

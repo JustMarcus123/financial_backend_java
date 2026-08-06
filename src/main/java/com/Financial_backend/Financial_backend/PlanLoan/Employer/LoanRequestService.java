@@ -41,16 +41,17 @@ public class LoanRequestService {
                 .map(planLoanEntity -> {
 
                     UsersEntity employee = planLoanEntity.getUser();
-                    
-
                     LoanRequestResponseDto loanRequestResponseDto = LoanRequestResponseDto.builder()
                             .loanId(planLoanEntity.getLoanId())
                             .loanPurpose(planLoanEntity.getLoanPurpose())
                             .loanAmount(planLoanEntity.getLoanAmount())
                             .repaymentTerm(planLoanEntity.getRepaymentTerm())
                             .user(employee.getFirstName() + " " + employee.getLastName())
-                            .requestedTime(String.valueOf(planLoanEntity.getRequestedTime()))
+                            .requestedTime(planLoanEntity.getRequestedTime())
                             .status(planLoanEntity.getStatus())
+                            .vestedBalance(employee.getBalance())
+                            .maxEligible(employee.getBalance()* 0.50)
+                            .monthlyPayment(planLoanEntity.getLoanAmount()*0.05 + monthlyAmount(planLoanEntity))
                             .build();
 
                     return loanRequestResponseDto;
@@ -59,9 +60,17 @@ public class LoanRequestService {
                 ).collect(Collectors.toList());
 
 
+
     }
 
+    // helper
+    public double monthlyAmount(
+            PlanLoanEntity usersData
+    ){
+        double amount = usersData.getLoanAmount() / Integer.parseInt( usersData.getRepaymentTerm());
 
+        return amount;
+    }
 
 
 }
