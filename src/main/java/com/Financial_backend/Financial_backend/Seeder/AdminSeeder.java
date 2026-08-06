@@ -2,7 +2,7 @@ package com.Financial_backend.Financial_backend.Seeder;
 
 import com.Financial_backend.Financial_backend.Entity.UsersEntity;
 import com.Financial_backend.Financial_backend.Enum.Role;
-import com.Financial_backend.Financial_backend.Respository.UsersRepository;
+import com.Financial_backend.Financial_backend.Repository.UsersRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;

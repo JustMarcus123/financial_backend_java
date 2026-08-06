@@ -3,12 +3,10 @@ package com.Financial_backend.Financial_backend.PlanLoan.Employer;
 
 import com.Financial_backend.Financial_backend.PlanLoan.Employer.Exception.SponsorNotExistException;
 import com.Financial_backend.Financial_backend.PlanLoan.Employer.ResponseDto.LoanRequestResponseDto;
-import com.Financial_backend.Financial_backend.Entity.SponsorEntity;
 import com.Financial_backend.Financial_backend.Entity.UsersEntity;
 import com.Financial_backend.Financial_backend.PlanLoan.PlanLoanEntity;
 import com.Financial_backend.Financial_backend.PlanLoan.PlanLoanRepository;
-import com.Financial_backend.Financial_backend.Respository.UsersRepository;
-import lombok.AllArgsConstructor;
+import com.Financial_backend.Financial_backend.Repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

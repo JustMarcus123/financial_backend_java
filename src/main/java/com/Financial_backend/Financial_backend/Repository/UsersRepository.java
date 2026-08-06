@@ -1,13 +1,11 @@
-package com.Financial_backend.Financial_backend.Respository;
+package com.Financial_backend.Financial_backend.Repository;
 
-import com.Financial_backend.Financial_backend.Dto.Response.EmployeeResponseDto;
 import com.Financial_backend.Financial_backend.Entity.SponsorEntity;
 import com.Financial_backend.Financial_backend.Entity.UsersEntity;
 import com.Financial_backend.Financial_backend.Enum.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Optional;

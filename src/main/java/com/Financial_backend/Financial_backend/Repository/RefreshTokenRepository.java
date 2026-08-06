@@ -1,4 +1,4 @@
-package com.Financial_backend.Financial_backend.Respository;
+package com.Financial_backend.Financial_backend.Repository;
 
 import com.Financial_backend.Financial_backend.Entity.RefreshTokenEntity;
 import com.Financial_backend.Financial_backend.Entity.UsersEntity;

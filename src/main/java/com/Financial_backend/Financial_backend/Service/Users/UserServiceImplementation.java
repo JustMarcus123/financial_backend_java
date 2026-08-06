@@ -1,11 +1,10 @@
 package com.Financial_backend.Financial_backend.Service.Users;
 
 
-import com.Financial_backend.Financial_backend.Config.PasswordConfig;
 import com.Financial_backend.Financial_backend.Dto.Request.UserRegisterRequestDto;
 import com.Financial_backend.Financial_backend.Dto.Response.UserRegisterResponseDto;
 import com.Financial_backend.Financial_backend.Entity.UsersEntity;
-import com.Financial_backend.Financial_backend.Respository.UsersRepository;
+import com.Financial_backend.Financial_backend.Repository.UsersRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

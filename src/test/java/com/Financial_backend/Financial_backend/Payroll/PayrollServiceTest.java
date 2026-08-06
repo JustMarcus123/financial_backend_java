@@ -1,16 +1,13 @@
 package com.Financial_backend.Financial_backend.Payroll;
 
 import com.Financial_backend.Financial_backend.Dto.Request.PayrollUploadRequestDto;
-import com.Financial_backend.Financial_backend.Dto.Response.PayrollResponseDto;
-import com.Financial_backend.Financial_backend.Entity.ContributionBatchEntity;
 import com.Financial_backend.Financial_backend.Entity.SponsorEntity;
 import com.Financial_backend.Financial_backend.Entity.UsersEntity;
-import com.Financial_backend.Financial_backend.Enum.PayrollType;
 import com.Financial_backend.Financial_backend.Enum.Role;
-import com.Financial_backend.Financial_backend.Respository.ContributionBatchRepository;
-import com.Financial_backend.Financial_backend.Respository.ContributionLineItemRepository;
-import com.Financial_backend.Financial_backend.Respository.NetworthRepository;
-import com.Financial_backend.Financial_backend.Respository.UsersRepository;
+import com.Financial_backend.Financial_backend.Repository.ContributionBatchRepository;
+import com.Financial_backend.Financial_backend.Repository.ContributionLineItemRepository;
+import com.Financial_backend.Financial_backend.Repository.NetworthRepository;
+import com.Financial_backend.Financial_backend.Repository.UsersRepository;
 import com.Financial_backend.Financial_backend.Service.PayrollService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

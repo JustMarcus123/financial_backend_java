@@ -1,6 +1,6 @@
 package com.Financial_backend.Financial_backend.Config;
 
-import com.Financial_backend.Financial_backend.Respository.UsersRepository;
+import com.Financial_backend.Financial_backend.Repository.UsersRepository;
 import com.Financial_backend.Financial_backend.Service.Users.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

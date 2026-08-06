@@ -3,7 +3,7 @@ package com.Financial_backend.Financial_backend.Auth;
 import com.Financial_backend.Financial_backend.Dto.Request.UserLoginRequestDto;
 import com.Financial_backend.Financial_backend.Dto.Response.UserLoginResponseDto;
 import com.Financial_backend.Financial_backend.Entity.UsersEntity;
-import com.Financial_backend.Financial_backend.Respository.UsersRepository;
+import com.Financial_backend.Financial_backend.Repository.UsersRepository;
 import com.Financial_backend.Financial_backend.Service.Auth.AuthServiceImplementation;
 import com.Financial_backend.Financial_backend.Service.Users.JwtService;
 import jakarta.servlet.http.Cookie;

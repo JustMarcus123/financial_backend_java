@@ -1,15 +1,12 @@
-package com.Financial_backend.Financial_backend.Respository;
+package com.Financial_backend.Financial_backend.Repository;
 
 import com.Financial_backend.Financial_backend.Entity.ContributionLineItemEntity;
 import com.Financial_backend.Financial_backend.Entity.UsersEntity;
-import lombok.Data;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 public interface ContributionLineItemRepository extends JpaRepository<ContributionLineItemEntity, Long> {
 
