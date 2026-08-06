@@ -10,11 +10,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/planType")
-public class PlanTypeControlller {
+public class PlanTypeController {
 
     private final PlanTypeService planTypeService;
 
-    public PlanTypeControlller(PlanTypeService planTypeService){
+    public PlanTypeController(PlanTypeService planTypeService){
         this.planTypeService = planTypeService;
     }
 

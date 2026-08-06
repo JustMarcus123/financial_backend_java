@@ -4,8 +4,7 @@ package com.Financial_backend.Financial_backend.Service;
 import com.Financial_backend.Financial_backend.Dto.Request.PlanTypeRequestDto;
 import com.Financial_backend.Financial_backend.Dto.Response.PlanTypeResponseDto;
 import com.Financial_backend.Financial_backend.Entity.PlanTypeEntity;
-import com.Financial_backend.Financial_backend.Respository.PlanTypeRepository;
-import org.springframework.http.ResponseEntity;
+import com.Financial_backend.Financial_backend.Repository.PlanTypeRepository;
 import org.springframework.stereotype.Service;
 
 

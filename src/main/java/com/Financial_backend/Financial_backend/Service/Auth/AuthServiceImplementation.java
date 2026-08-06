@@ -4,7 +4,7 @@ import com.Financial_backend.Financial_backend.Dto.Request.UserLoginRequestDto;
 import com.Financial_backend.Financial_backend.Dto.Response.UserLoginResponseDto;
 import com.Financial_backend.Financial_backend.Entity.RefreshTokenEntity;
 import com.Financial_backend.Financial_backend.Entity.UsersEntity;
-import com.Financial_backend.Financial_backend.Respository.UsersRepository;
+import com.Financial_backend.Financial_backend.Repository.UsersRepository;
 import com.Financial_backend.Financial_backend.Service.Users.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;

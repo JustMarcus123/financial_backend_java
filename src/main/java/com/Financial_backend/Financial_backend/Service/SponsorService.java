@@ -6,15 +6,14 @@ import com.Financial_backend.Financial_backend.Entity.SponsorEntity;
 import com.Financial_backend.Financial_backend.Entity.UsersEntity;
 import com.Financial_backend.Financial_backend.Enum.Role;
 import com.Financial_backend.Financial_backend.Enum.SponsorStatus;
-import com.Financial_backend.Financial_backend.Respository.SponsorRepository;
-import com.Financial_backend.Financial_backend.Respository.UsersRepository;
+import com.Financial_backend.Financial_backend.Repository.SponsorRepository;
+import com.Financial_backend.Financial_backend.Repository.UsersRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service

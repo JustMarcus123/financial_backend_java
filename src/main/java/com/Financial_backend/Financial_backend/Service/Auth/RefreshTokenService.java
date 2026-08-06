@@ -20,9 +20,8 @@ package com.Financial_backend.Financial_backend.Service.Auth;
 
 import com.Financial_backend.Financial_backend.Entity.RefreshTokenEntity;
 import com.Financial_backend.Financial_backend.Entity.UsersEntity;
-import com.Financial_backend.Financial_backend.Respository.RefreshTokenRepository;
+import com.Financial_backend.Financial_backend.Repository.RefreshTokenRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
